@@ -5,7 +5,34 @@ import Em from 'ember';
 
 var run = Em.run;
 
+const defaultPropertiesName = {
+  src: 'src',
+  h: 'h',
+  w: 'w',
+  title: 'title'
+};
+
 export default Em.Component.extend({
+
+  didInitAttrs() {
+    const newPropertiesName = this.get('propertiesName') || {};
+    this.set('propertiesName', Em.merge(defaultPropertiesName, newPropertiesName));
+
+    this.set('_internalItems', this._buildInternalItems());
+  },
+
+  _buildInternalItems() {
+    const propertiesName = this.get('propertiesName');
+    const items = this.get('items');
+    return Em.A(items).map((item) => {
+      return {
+        src: Em.get(item, propertiesName.src),
+        h: Em.get(item, propertiesName.h),
+        w: Em.get(item, propertiesName.w),
+        title: Em.get(item, propertiesName.title)
+      };
+    });
+  },
 
   onInsert: Em.on('didInsertElement', function() {
 
@@ -17,11 +44,11 @@ export default Em.Component.extend({
 
       /**
        * DEPRECATED
-       * 
-       * Code exists for backward compatability of block usage 
-       * up to ember-cli-photoswipe versions 1.0.1. 
+       *
+       * Code exists for backward compatability of block usage
+       * up to ember-cli-photoswipe versions 1.0.1.
        */
-      if (this.get('items')) {
+      if (this.get('_internalItems')) {
         return this._initItemGallery();
       }
       console.log("WARNING: See https://github.com/poetic/ember-cli-photoswipe#usage");
@@ -49,7 +76,7 @@ export default Em.Component.extend({
     this.set('gallery', new PhotoSwipe(
       this.get('pswpEl'),
       this.get('pswpTheme'),
-      this.get('items'),
+      this.get('_internalItems'),
       this.get('options')
     ));
     this._reInitOnClose();
@@ -64,20 +91,20 @@ export default Em.Component.extend({
     });
   },
 
-  itemObserver: Em.observer('items', function(){
+  itemObserver: Em.observer('_internalItems', function(){
     var component = this;
     component._initItemGallery();
   }),
-  
+
   /**
    * DEPRECATED
-   * 
-   * Code exists for backward compatability of block usage 
-   * up to ember-cli-photoswipe versions 1.0.1. 
-   */  
+   *
+   * Code exists for backward compatability of block usage
+   * up to ember-cli-photoswipe versions 1.0.1.
+   */
   click: function(evt) {
 
-    if (this.get('items')) {
+    if (this.get('_internalItems')) {
       return; // ignore - not using deprecated block form
     }
 
@@ -100,10 +127,10 @@ export default Em.Component.extend({
     );
     this.set('gallery', pSwipe);
     this.get('gallery').init();
-  }, 
+  },
   /**
    * END DEPRECATED
-   */   
+   */
 
   _getBounds: function(i) {
     var img      = this.$('img').get(i),
@@ -116,13 +143,13 @@ export default Em.Component.extend({
     launchGallery(item) {
       this._buildOptions(this._getBounds.bind(this));
       if (item !== undefined) {
-        var index = this.get('items').indexOf(item);
+        var index = this.get('_internalItems').indexOf(item);
         this.set('options.index', index);
       }
       var pSwipe = new PhotoSwipe(
         this.get('pswpEl'),
         this.get('pswpTheme'),
-        this.get('items'),
+        this.get('_internalItems'),
         this.get('options')
       );
       this.set('gallery', pSwipe);
@@ -133,10 +160,10 @@ export default Em.Component.extend({
 
   /**
    * DEPRECATED
-   * 
-   * Code exists for backward compatability of block usage 
-   * up to ember-cli-photoswipe versions 1.0.1. 
-   */  
+   *
+   * Code exists for backward compatability of block usage
+   * up to ember-cli-photoswipe versions 1.0.1.
+   */
   _calculateItems: function() {
     var items           = this.$().find('a');
     var calculatedItems = Em.A(items).map(function(i, item) {
@@ -149,9 +176,8 @@ export default Em.Component.extend({
       };
     });
     this.set('calculatedItems', calculatedItems);
-  }  
+  }
   /**
    * END DEPRECATED
-   */      
-
+   */
 });

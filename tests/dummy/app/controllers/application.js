@@ -20,6 +20,25 @@ export default Ember.Controller.extend({
     }
   ],
 
+  itemsWithUncommonProp: [
+    {
+      path: 'http://placekitten.com/g/600/400',
+      width: 600,
+      h: 400,
+      title: 'whooa'
+    },
+    {
+      path: 'http://placekitten.com/g/1200/900',
+      width: 1200,
+      h: 900
+    }
+  ],
+
+  newPropertiesName: {
+    src: 'path',
+    w: 'width'
+  },
+
   // actions
   actions: {
     initGallery: function() {

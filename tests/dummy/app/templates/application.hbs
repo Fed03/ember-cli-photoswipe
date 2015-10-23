@@ -15,3 +15,12 @@
     <img class="thumb" src={{img.src}} alt={{img.title}}>
 
 {{/photo-swipe}}
+
+<!-- example 2 -->
+<h3>Example when passing a block and images with properties that are not what photo-swipe expects</h3>
+
+{{#photo-swipe options=psTwoOpts items=itemsWithUncommonProp propertiesName=newPropertiesName as |img|}}
+
+    <img class="thumb" src={{img.path}} alt={{img.title}}>
+
+{{/photo-swipe}}
